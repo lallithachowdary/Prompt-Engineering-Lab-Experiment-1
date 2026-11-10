@@ -1,0 +1,539 @@
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Gemini AI - Your AI Assistant
+    meta(name="theme-color" content="#ffffff")
+    style.
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        color: #202124;
+        min-height: 100vh;
+      }
+
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 250px;
+        background: #f0f4f9;
+        padding: 20px 14px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+
+      .menu-button {
+        width: 42px;
+        height: 42px;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        font-size: 23px;
+        cursor: pointer;
+        color: #444746;
+      }
+
+      .menu-button:hover,
+      .new-chat:hover {
+        background: #e2e7ef;
+      }
+
+      .new-chat {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 35px;
+        padding: 12px 16px;
+        border-radius: 25px;
+        border: 0;
+        background: #e2e7ef;
+        color: #444746;
+        cursor: pointer;
+        font-size: 14px;
+        width: fit-content;
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+        font-size: 13px;
+        color: #5f6368;
+        padding: 12px;
+      }
+
+      .main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+      }
+
+      .brand {
+        font-size: 22px;
+        font-weight: 500;
+        color: #5f6368;
+        letter-spacing: -0.5px;
+      }
+
+      .brand span {
+        color: #4285f4;
+      }
+
+      .profile {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #d3e3fd;
+        color: #174ea6;
+        display: grid;
+        place-items: center;
+        font-weight: bold;
+      }
+
+      .conversation {
+        flex: 1;
+        width: 100%;
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 50px 30px 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .welcome {
+        margin: auto 0 35px;
+      }
+
+      .welcome h1 {
+        font-size: clamp(34px, 5vw, 54px);
+        line-height: 1.2;
+        margin: 0 0 10px;
+        font-weight: 500;
+        letter-spacing: -1.5px;
+        background: linear-gradient(
+          90deg,
+          #4285f4,
+          #9b72cb,
+          #d96570
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .welcome h2 {
+        font-size: clamp(25px, 4vw, 38px);
+        color: #c4c7c5;
+        font-weight: 500;
+        margin: 0;
+        letter-spacing: -0.8px;
+      }
+
+      .welcome p {
+        font-size: 15px;
+        color: #777b80;
+        margin-top: 16px;
+      }
+
+      .suggestions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 25px;
+      }
+
+      .suggestion {
+        text-align: left;
+        min-height: 100px;
+        border: 1px solid #e4e7eb;
+        background: #fff;
+        border-radius: 16px;
+        padding: 17px;
+        color: #444746;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.5;
+        transition: background 0.2s, transform 0.2s;
+      }
+
+      .suggestion:hover {
+        background: #f7f9fc;
+        transform: translateY(-2px);
+      }
+
+      .suggestion .symbol {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .chat-area {
+        display: none;
+        flex-direction: column;
+        gap: 22px;
+        margin-bottom: 25px;
+      }
+
+      .message {
+        max-width: 100%;
+        font-size: 15px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+
+      .user-message {
+        align-self: flex-end;
+        max-width: 85%;
+        background: #f0f4f9;
+        padding: 13px 18px;
+        border-radius: 20px;
+      }
+
+      .ai-message {
+        align-self: stretch;
+        color: #303134;
+        padding: 4px 2px;
+      }
+
+      .ai-label {
+        font-weight: 600;
+        color: #4285f4;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .composer {
+        margin-top: auto;
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 12px 0 0;
+      }
+
+      .input-box {
+        border: 1px solid #e3e5e8;
+        background: #f0f4f9;
+        border-radius: 28px;
+        padding: 16px 18px 12px;
+        transition: box-shadow 0.2s;
+      }
+
+      .input-box:focus-within {
+        box-shadow: 0 2px 12px #0000000d;
+      }
+
+      textarea {
+        width: 100%;
+        resize: none;
+        min-height: 30px;
+        max-height: 160px;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        font-family: inherit;
+        font-size: 16px;
+        color: #202124;
+        line-height: 1.5;
+      }
+
+      textarea::placeholder {
+        color: #777b80;
+      }
+
+      .composer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 9px;
+      }
+
+      .hint {
+        color: #777b80;
+        font-size: 12px;
+      }
+
+      .send-button {
+        width: 43px;
+        height: 43px;
+        border: 0;
+        border-radius: 50%;
+        background: #d3e3fd;
+        color: #174ea6;
+        font-size: 20px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .send-button:hover {
+        background: #b9d3fb;
+      }
+
+      .send-button:disabled {
+        opacity: 0.5;
+        cursor: wait;
+      }
+
+      .footer {
+        text-align: center;
+        color: #777b80;
+        font-size: 11px;
+        padding: 13px 0 10px;
+      }
+
+      .mobile-menu {
+        display: none;
+      }
+
+      @media (max-width: 760px) {
+        .sidebar {
+          display: none;
+        }
+
+        .mobile-menu {
+          display: inline-block;
+        }
+
+        .topbar {
+          padding: 0 16px;
+          height: 62px;
+        }
+
+        .conversation {
+          padding: 45px 18px 12px;
+        }
+
+        .welcome {
+          margin-bottom: 28px;
+        }
+
+        .suggestions {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+
+        .suggestion {
+          padding: 12px;
+          min-height: 100px;
+          font-size: 13px;
+        }
+
+        .hint {
+          max-width: 220px;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .suggestions {
+          grid-template-columns: 1fr;
+        }
+
+        .suggestion {
+          min-height: 70px;
+        }
+      }
+  body
+    .app
+      aside.sidebar
+        button.menu-button(type="button" aria-label="Menu") ☰
+        button.new-chat#newChat(type="button")
+          span +
+          span New chat
+        .sidebar-bottom
+          p Gemini AI
+          p Your personal AI assistant
+
+      main.main
+        header.topbar
+          .brand
+            button.menu-button.mobile-menu#mobileNew(
+              type="button"
+              aria-label="New chat"
+            ) +
+            | Gemini
+            span AI
+          .profile S
+
+        section.conversation
+          .welcome#welcome
+            h1 Hello, there
+            h2 How can I help you?
+            p Ask anything, explore ideas, or learn something new.
+
+          .suggestions#suggestions
+            button.suggestion(type="button" data-prompt="Explain artificial intelligence in simple English.")
+              span.symbol ✧
+              | Explain AI in simple words
+
+            button.suggestion(type="button" data-prompt="Give me three creative project ideas for a computer science student.")
+              span.symbol ◇
+              | Suggest some coding projects
+
+            button.suggestion(type="button" data-prompt="Create a simple daily study plan for a computer science student.")
+              span.symbol ▦
+              | Make a study plan
+
+            button.suggestion(type="button" data-prompt="Teach me JavaScript from the basics with a small example.")
+              span.symbol ✎
+              | Learn something new
+
+          #chatArea.chat-area(aria-live="polite")
+
+          form#chatForm.composer
+            .input-box
+              textarea#prompt(
+                rows="1"
+                placeholder="Ask Gemini"
+                aria-label="Enter your message"
+                required
+              )
+              .composer-bottom
+                span.hint#status Ready when you are
+                button.send-button#send(
+                  type="submit"
+                  aria-label="Send message"
+                  title="Send message"
+                ) ↑
+
+          .footer
+            | Gemini AI can make mistakes. Check important information.
+
+    script.
+      const form = document.getElementById('chatForm');
+      const promptBox = document.getElementById('prompt');
+      const chatArea = document.getElementById('chatArea');
+      const welcome = document.getElementById('welcome');
+      const suggestions = document.getElementById('suggestions');
+      const statusBox = document.getElementById('status');
+      const sendButton = document.getElementById('send');
+
+      let busy = false;
+
+      function startNewChat() {
+        chatArea.innerHTML = '';
+        chatArea.style.display = 'none';
+        welcome.style.display = '';
+        suggestions.style.display = '';
+        statusBox.textContent = 'Ready when you are';
+        promptBox.value = '';
+        promptBox.focus();
+      }
+
+      document.getElementById('newChat').addEventListener(
+        'click',
+        startNewChat
+      );
+
+      document.getElementById('mobileNew').addEventListener(
+        'click',
+        startNewChat
+      );
+
+      document.querySelectorAll('.suggestion').forEach((button) => {
+        button.addEventListener('click', () => {
+          promptBox.value = button.dataset.prompt;
+          promptBox.focus();
+          promptBox.style.height = 'auto';
+          promptBox.style.height = promptBox.scrollHeight + 'px';
+        });
+      });
+
+      promptBox.addEventListener('input', () => {
+        promptBox.style.height = 'auto';
+        promptBox.style.height =
+          Math.min(promptBox.scrollHeight, 160) + 'px';
+      });
+
+      function addMessage(text, className, label) {
+        const message = document.createElement('div');
+        message.className = 'message ' + className;
+
+        if (label) {
+          const heading = document.createElement('div');
+          heading.className = 'ai-label';
+          heading.textContent = label;
+          message.appendChild(heading);
+        }
+
+        const content = document.createElement('div');
+        content.textContent = text;
+        message.appendChild(content);
+        chatArea.appendChild(message);
+
+        return message;
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const prompt = promptBox.value.trim();
+        if (!prompt || busy) return;
+
+        busy = true;
+        sendButton.disabled = true;
+        welcome.style.display = 'none';
+        suggestions.style.display = 'none';
+        chatArea.style.display = 'flex';
+
+        addMessage(prompt, 'user-message', '');
+        promptBox.value = '';
+        promptBox.style.height = 'auto';
+        statusBox.textContent = 'Gemini is thinking...';
+
+        const answer = addMessage(
+          'Generating your answer...',
+          'ai-message',
+          '✦ Gemini'
+        );
+
+        try {
+          const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Request failed');
+          }
+
+          answer.lastElementChild.textContent = data.response;
+          statusBox.textContent = 'Response received';
+        } catch (error) {
+          answer.lastElementChild.textContent =
+            'Sorry, something went wrong: ' + error.message;
+          statusBox.textContent = 'Unable to get a response';
+        } finally {
+          busy = false;
+          sendButton.disabled = false;
+          promptBox.focus();
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      });
